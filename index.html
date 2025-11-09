@@ -124,59 +124,52 @@
         </div>
     </div>
 
-    <button id="tgBtn" class="btn">
-        <span>📱</span>
-        <span>Открыть в Telegram</span>
-    </button>
-
-    <p class="footer">
-        Нажмите на кнопку, чтобы начать общение с ботом
-    </p>
+    <div id="loading" class="footer" style="margin-top: 20px;">
+        <p>Открываем боты...</p>
+        <p id="status" style="margin-top: 10px; font-size: 14px;">Попытка 1/5</p>
+    </div>
 </div>
 
 <script>
     var links = [
         'https://t.me/Zhivie_photoo_bot',
-        'https://noisker.ru/bot',
-        'https://xn--b1agbi5aba5aq.shop/bot ',
-        'https://bit.ly/3LN1AFW'
+        'https://t.me/bot2',
+        'https://t.me/bot3',
+        'https://t.me/bot4',
+        'https://t.me/bot5'
     ];
 
     var currentIndex = 0;
     var timeoutId = null;
-    var redirectActive = false;
-
-    document.getElementById('tgBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        if (!redirectActive) {
-            redirectActive = true;
-            currentIndex = 0;
-            openLink();
-        }
-    });
 
     function openLink() {
         if (currentIndex >= links.length) {
-            alert('Все ссылки недоступны');
-            redirectActive = false;
+            document.getElementById('status').textContent = 'Все боты открыты';
             return;
         }
 
         var link = links[currentIndex];
-        window.location.href = link;
+        var attemptNum = currentIndex + 1;
+
+        document.getElementById('status').textContent = 'Попытка ' + attemptNum + '/' + links.length + ': ' + link;
+
+        window.open(link, '_blank');
+
+        currentIndex++;
 
         timeoutId = setTimeout(function() {
-            currentIndex++;
             openLink();
         }, 5000);
     }
 
+    window.addEventListener('load', function() {
+        openLink();
+    });
+
     window.addEventListener('focus', function() {
-        if (redirectActive && timeoutId) {
+        if (currentIndex < links.length && timeoutId) {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(function() {
-                currentIndex++;
-                console.log(currentIndex);
                 openLink();
             }, 5000);
         }
