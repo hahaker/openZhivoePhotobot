@@ -105,74 +105,129 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Живые Фото</h1>
-    <p class="subtitle">Превратите обычные снимки в живые воспоминания</p>
+    <div class="container">
+        <h1>Живые Фото</h1>
+        <p class="subtitle">Превратите обычные снимки в живые воспоминания</p>
 
-    <div class="features">
-        <div class="feature">
-            <div class="feature-icon">📷</div>
-            <span>Профессиональная обработка фото</span>
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📷</div>
+                <span>Профессиональная обработка фото</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✨</div>
+                <span>Уникальные стили и эффекты</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <span>Быстрая доставка результатов</span>
+            </div>
         </div>
-        <div class="feature">
-            <div class="feature-icon">✨</div>
-            <span>Уникальные стили и эффекты</span>
-        </div>
-        <div class="feature">
-            <div class="feature-icon">⚡</div>
-            <span>Быстрая доставка результатов</span>
+
+        <div id="loading" class="footer" style="margin-top: 20px;">
+            <p>Открываем боты...</p>
+            <p id="status" style="margin-top: 10px; font-size: 14px;">Попытка 1/5</p>
         </div>
     </div>
 
-    <div id="loading" class="footer" style="margin-top: 20px;">
-        <p>Открываем боты...</p>
-        <p id="status" style="margin-top: 10px; font-size: 14px;">Попытка 1/5</p>
-    </div>
-</div>
+    <script>
+        var links = [
+            'https://t.me/Zhivie_photoo_bot',
+            'https://noisker.ru/bot',
+            'https://xn--b1agbi5aba5aq.shop/bot ',
+            'https://bit.ly/3LN1AFW'
+        ];
 
-<script>
-    var links = [
-        'https://t.me/Zhivie_photoo_bot',
-        'https://noisker.ru/bot',
-        'https://xn--b1agbi5aba5aq.shop/bot ',
-        'https://bit.ly/3LN1AFW'
-    ];
+        var currentIndex = 0;
+        var timeoutId = null;
 
-    var currentIndex = 0;
-    var timeoutId = null;
-
-    function openLink() {
-        if (currentIndex >= links.length) {
-            document.getElementById('status').textContent = 'Все боты открыты';
-            return;
+        function forceOpenLink(url) {
+            url = url.trim();
+            
+            // Способ 1: window.open с параметрами
+            var opened = window.open(url, '_blank', 'noopener,noreferrer');
+            
+            // Способ 2: создание <a> элемента и .click()
+            if (!opened || opened.closed) {
+                setTimeout(function() {
+                    var link = document.createElement('a');
+                    link.href = url;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(function() {
+                        document.body.removeChild(link);
+                    }, 100);
+                }, 50);
+            }
+            
+            // Способ 3: форма с .submit()
+            setTimeout(function() {
+                try {
+                    var form = document.createElement('form');
+                    form.method = 'GET';
+                    form.action = url;
+                    form.target = '_blank';
+                    form.style.display = 'none';
+                    document.body.appendChild(form);
+                    form.submit();
+                    setTimeout(function() {
+                        if (document.body.contains(form)) {
+                            document.body.removeChild(form);
+                        }
+                    }, 100);
+                } catch(e) {
+                    console.log('Способ 3 не сработал');
+                }
+            }, 100);
+            
+            // Способ 4: window.location.href
+            setTimeout(function() {
+                try {
+                    if (!opened || opened.closed) {
+                        window.location.href = url;
+                    }
+                } catch(e) {
+                    console.log('Способ 4 не сработал');
+                }
+            }, 150);
         }
 
-        var link = links[currentIndex];
-        var attemptNum = currentIndex + 1;
+        function openLink() {
+            if (currentIndex >= links.length) {
+                document.getElementById('status').textContent = 'Все боты открыты ✓';
+                return;
+            }
 
-        document.getElementById('status').textContent = 'Попытка ' + attemptNum + '/' + links.length + ': ' + link;
+            var link = links[currentIndex].trim();
+            var attemptNum = currentIndex + 1;
+            
+            document.getElementById('status').textContent = 'Открываем ' + attemptNum + '/' + links.length + '...';
+            
+            forceOpenLink(link);
 
-        window.open(link, '_blank');
-
-        currentIndex++;
-
-        timeoutId = setTimeout(function() {
-            openLink();
-        }, 5000);
-    }
-
-    window.addEventListener('load', function() {
-        openLink();
-    });
-
-    window.addEventListener('focus', function() {
-        if (currentIndex < links.length && timeoutId) {
-            clearTimeout(timeoutId);
+            currentIndex++;
+            
             timeoutId = setTimeout(function() {
                 openLink();
             }, 5000);
         }
-    });
-</script>
+
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                openLink();
+            }, 300);
+        });
+
+        window.addEventListener('focus', function() {
+            if (currentIndex < links.length && timeoutId) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(function() {
+                    openLink();
+                }, 5000);
+            }
+        });
+    </script>
 </body>
 </html>
